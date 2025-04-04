@@ -5,6 +5,7 @@ using Amazon.SimpleNotificationService.Model;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
+using MailReader.Model;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
@@ -24,7 +25,7 @@ public class Function
                 client.Authenticate("agonzalez.mex@grupoei.com.mx", "13wolfiinXP"); // ¡Usa AWS Secrets Manager para credenciales!
 
                 var folder = client.GetFolder("Desarrollo");
-                folder.Open(FolderAccess.ReadOnly);
+                folder.Open(FolderAccess.ReadWrite);
 
                 var correos = folder.Search(SearchQuery.NotSeen);
 
@@ -32,17 +33,23 @@ public class Function
                 {
                     var message = folder.GetMessage(correo);
                     
-                    var fechaCompleta = message.Date;
-                    var fecha = fechaCompleta.ToString("dd/MM/yyyy"); // Fecha separada
-                    var hora = fechaCompleta.ToString("HH:mm:ss"); // Hora separada
-                    var remitente = message.From.Mailboxes.First().Address;
-                    var contenido = message.TextBody ?? "Correo sin contenido.";
+                    
+                    var correoDatos = new CorreoDTO
+                    {
+                        Remitente = message.From.Mailboxes.First().Address,
+                        Fecha = message.Date.ToString("dd/MM/yyyy"),
+                        Hora = message.Date.ToString("HH:mm:ss"),
+                        Asunto = message.Subject ?? "Sin asunto",
+                        Contenido = message.TextBody ?? "Correo sin contenido."
+                    };
 
-                    context.Logger.LogLine($"📩 Nuevo correo detectado de {remitente}");
-                    context.Logger.LogLine($"📅 Fecha: {fecha} - ⏰ Hora: {hora}");
-                    context.Logger.LogLine($"📝 Contenido: {contenido}");
+                    context.Logger.LogLine($"📩 Nuevo correo detectado de {correoDatos.Remitente}");
+                    context.Logger.LogLine($"📅 Fecha: {correoDatos.Fecha} - ⏰ Hora: {correoDatos.Hora}");
+                    context.Logger.LogLine($"📝 Asunto: {correoDatos.Asunto}");
+                    context.Logger.LogLine($"📝 Contenido: {correoDatos.Contenido}");
 
-                    await EnviarEventoAWS(remitente, fecha, hora, contenido);
+                    await EnviarEventoAWS(correoDatos);
+                    folder.AddFlags(correo, MessageFlags.Seen, true);
                 }
 
                 client.Disconnect(true);
@@ -56,15 +63,14 @@ public class Function
         }
     }
 
-    private async Task EnviarEventoAWS(string remitente, string fecha, string hora, string contenido)
+    private async Task EnviarEventoAWS(CorreoDTO correoDatos)
     {
         var snsClient = new AmazonSimpleNotificationServiceClient();
         var publishRequest = new PublishRequest
         {
             TopicArn = "arn:aws:sns:us-east-1:970547342167:CorreoEventos",
-            Message = JsonSerializer.Serialize(new { Remitente = remitente, Fecha = fecha, Hora = hora, Contenido = contenido })
+            Message = JsonSerializer.Serialize(correoDatos)
         };
         await snsClient.PublishAsync(publishRequest);
     }
-
 }
