@@ -1,10 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+        <OutputType>Library</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier> <!-- Required for AWS Lambda -->
+        <PublishAot>false</PublishAot> <!-- Prevents ahead-of-time (AOT) issues -->
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Amazon.Lambda.Core" Version="2.5.1" />
+      <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.13.0" />
+      <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
+      <PackageReference Include="Amazon.Lambda.SQSEvents" Version="2.2.0" />
+      <PackageReference Include="AWSSDK.SQS" Version="4.0.0-preview.11" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.3" />
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DatabaseInitializer\DatabaseInitializer.csproj" />
+    </ItemGroup>
 
 </Project>
