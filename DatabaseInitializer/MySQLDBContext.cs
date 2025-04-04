@@ -1,5 +1,8 @@
+using Amazon.SecretsManager;
+using Amazon.SecretsManager.Model;
 using DatabaseInitializer.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DatabaseInitializer;
 
@@ -12,8 +15,10 @@ public class MySQLDBContext :  DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        var rdsCredentials = ObtenerCredencialesRDS().GetAwaiter().GetResult();
+        
         optionsBuilder.UseMySql(
-            "Server=db-lecturacorreosaws.c4bkgguee5hw.us-east-1.rds.amazonaws.com;Database=DB-LecturaCorreosAWS;User=admin;Password=13wolfiinXP_;Port=3306;",
+            $"Server={rdsCredentials.Endpoint};Database={rdsCredentials.DbName};User={rdsCredentials.Username};Password={rdsCredentials.Password};Port={rdsCredentials.Port};",
             new MySqlServerVersion(new Version(8, 0, 3)),  // 💡 Ajusta la versión de MySQL según la que usas en RDS
             options =>
             {
@@ -72,5 +77,17 @@ public class MySQLDBContext :  DbContext
         );
 
     }
+    
+    private async Task<(string Endpoint, string DbName, string Username, string Password,string Port)> ObtenerCredencialesRDS()
+    {
+        var secretArn = Environment.GetEnvironmentVariable("RDS_SECRET_ARN");
+        var client = new AmazonSecretsManagerClient();
+        var request = new GetSecretValueRequest { SecretId = secretArn };
+        var response = await client.GetSecretValueAsync(request);
+    
+        var secret = JsonConvert.DeserializeObject<dynamic>(response.SecretString);
+        return (secret.ENDPOINT.ToString(), secret.DBNAME.ToString(), secret.USERNAME.ToString(), secret.PASSWORD.ToString(),secret.PORT.ToString());
+    }
+
     
 }

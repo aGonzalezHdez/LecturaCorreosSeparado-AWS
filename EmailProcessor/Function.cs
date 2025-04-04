@@ -17,7 +17,7 @@ public class Function
 {
     public async Task Handler(SQSEvent sqsEvent, ILambdaContext context)
     {
-        var queueUrl = "https://sqs.us-east-1.amazonaws.com/970547342167/LecturaCorreos-Recibidos";
+        var queueUrl = Environment.GetEnvironmentVariable("SQS_QUEUE_URL");
         var sqsClient = new AmazonSQSClient();
 
         using var db = new MySQLDBContext(); // **Usamos DbContext para interactuar con RDS**
