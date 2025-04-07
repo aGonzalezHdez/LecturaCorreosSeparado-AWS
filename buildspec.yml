@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: 8.0  # Version actual utilizada
+    commands:
+      - echo "Instalando dependencias..."      
+      - dotnet restore EmailProcessor/EmailProcessor.csproj
+      - dotnet restore MailReader/MailReader.csproj
+
+  build:
+    commands:
+      - echo "Compilando todos los proyectos..."      
+      - dotnet build EmailProcessor/EmailProcessor.csproj --configuration Release
+      - dotnet build MailReader/MailReader.csproj --configuration Release
+
+  post_build:
+    commands:
+      - echo "Publicando y empaquetando EmailProcessor..."
+      - dotnet publish EmailProcessor/EmailProcessor.csproj -c Release -o published/EmailProcessor
+      - rm -f published/EmailProcessor/DatabaseInitializer.runtimeconfig.json  # ❌ Elimina el archivo antes de empaquetar
+      - cd published/EmailProcessor && zip -r ../../EmailProcessor.zip . && cd ../..
+
+      - echo "Publicando y empaquetando MailReader..."
+      - dotnet publish MailReader/MailReader.csproj -c Release -o published/MailReader
+      - cd published/MailReader && zip -r ../../MailReader.zip . && cd ../..
+
+artifacts:
+  files:
+    - EmailProcessor.zip
+    - MailReader.zip
+  discard-paths: yes
