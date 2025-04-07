@@ -20,18 +20,15 @@ phases:
       - echo "Publicando y empaquetando EmailProcessor..."
       - dotnet publish EmailProcessor/EmailProcessor.csproj -c Release -o published/EmailProcessor
       
-      - echo "Verificando estructura de archivos EmailProcessor antes de empaquetar..."
-      - ls -l published/
-      - ls -l published/EmailProcessor/
+      - echo "Eliminando archivo DatabaseInitializer.runtimeconfig.json..."
+      - if (Test-Path "published/EmailProcessor/DatabaseInitializer.runtimeconfig.json") { Remove-Item "published/EmailProcessor/DatabaseInitializer.runtimeconfig.json" }
+      
       - echo "Empaquetando EmailProcessor en ZIP usando PowerShell..."
       - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor.zip      
       
       - echo "Publicando y empaquetando MailReader..."
       - dotnet publish MailReader/MailReader.csproj -c Release -o published/MailReader
-      - echo "Verificando estructura de archivos MailReader antes de empaquetar..."
-      - ls -l published/
-      - ls -l published/EmailProcessor/
-
+      
       - echo "Empaquetando MailReader en ZIP usando PowerShell..."
       - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader.zip
 
