@@ -17,9 +17,15 @@ phases:
 
   post_build:
     commands:
+      - echo "Verificando estructura de archivos antes de empaquetar..."
+      - ls -l published/
+      - ls -l published/EmailProcessor/
+      - ls -l published/MailReader/
+      
+      
       - echo "Publicando y empaquetando EmailProcessor..."
       - dotnet publish EmailProcessor/EmailProcessor.csproj -c Release -o published/EmailProcessor
-      - rm -f published/EmailProcessor/DatabaseInitializer.runtimeconfig.json  # ❌ Elimina el archivo antes de empaquetar
+      - if [ -f published/EmailProcessor/DatabaseInitializer.runtimeconfig.json ]; then rm -f published/EmailProcessor/DatabaseInitializer.runtimeconfig.json; fi
       - cd published/EmailProcessor && zip -r ../../EmailProcessor.zip . && cd ../..
 
       - echo "Publicando y empaquetando MailReader..."
