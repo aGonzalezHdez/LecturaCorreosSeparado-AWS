@@ -23,15 +23,19 @@ phases:
       - echo "Verificando estructura de archivos EmailProcessor antes de empaquetar..."
       - ls -l published/
       - ls -l published/EmailProcessor/
-      - cd published/EmailProcessor && zip -r ../../EmailProcessor.zip . && cd ../..
-
+      - cd published/EmailProcessor
+      - zip -r ../../EmailProcessor.zip .
+      - cd ../..      
+      
       - echo "Publicando y empaquetando MailReader..."
       - dotnet publish MailReader/MailReader.csproj -c Release -o published/MailReader
       - echo "Verificando estructura de archivos MailReader antes de empaquetar..."
       - ls -l published/
-      - ls -l published/EmailProcessor/  
-        
-      - cd published/MailReader && zip -r ../../MailReader.zip . && cd ../..
+      - ls -l published/EmailProcessor/
+
+      - cd published/MailReader
+      - zip -r ../../MailReader.zip .
+      - cd ../..
 
 artifacts:
   files:
