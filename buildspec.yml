@@ -32,6 +32,14 @@ phases:
       - echo "Empaquetando MailReader en ZIP usando PowerShell..."
       - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader.zip
 
+      - echo "Verificando archivos ZIP generados..."
+        - ls -l EmailProcessor.zip
+        - ls -l MailReader.zip
+
+
+
+
+
 artifacts:
   files:
     - EmailProcessor.zip
