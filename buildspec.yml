@@ -3,44 +3,22 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      dotnet: 8.0  # Version actual utilizada
-    commands:
-      - echo "Instalando dependencias..."      
-      - dotnet restore EmailProcessor/EmailProcessor.csproj
-      - dotnet restore MailReader/MailReader.csproj
-
+      dotnet: 8
   build:
     commands:
-      - echo "Compilando todos los proyectos..."      
-      - dotnet build EmailProcessor/EmailProcessor.csproj --configuration Release
-      - dotnet build MailReader/MailReader.csproj --configuration Release
-
+      - echo "Compilando el proyecto..."
+      - dotnet publish -c Release -o published/
   post_build:
     commands:
-      - echo "Publicando y empaquetando EmailProcessor..."
-      - dotnet publish EmailProcessor/EmailProcessor.csproj -c Release -o published/EmailProcessor
-      
-      - echo "Eliminando archivo DatabaseInitializer.runtimeconfig.json..."
-      - if (Test-Path "published/EmailProcessor/DatabaseInitializer.runtimeconfig.json") { Remove-Item "published/EmailProcessor/DatabaseInitializer.runtimeconfig.json" }
-      
-      - echo "Empaquetando EmailProcessor en ZIP usando PowerShell..."
-      - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor_zip.zip      
-      
-      - echo "Publicando y empaquetando MailReader..."
-      - dotnet publish MailReader/MailReader.csproj -c Release -o published/MailReader
-      
-      - echo "Empaquetando MailReader en ZIP usando PowerShell..."
+      - echo "Generando archivos ZIP con nombres compatibles..."
+      - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor_zip.zip
       - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader_zip.zip
-        
-      - echo "Verificando archivos ZIP generados..."
+      - echo "Verificación de archivos generados:"
       - ls -l EmailProcessor_zip.zip
       - ls -l MailReader_zip.zip
 
-
 artifacts:
-  secondary-artifacts:
-    BuildArtifact:
-      files:
-        - EmailProcessor_zip.zip
-        - MailReader_zip.zip
-      discard-paths: yes 
+  files:
+    - EmailProcessor_zip.zip
+    - MailReader_zip.zip
+  discard-paths: yes
