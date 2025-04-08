@@ -4,19 +4,24 @@ phases:
   install:
     runtime-versions:
       dotnet: 8
+
   build:
     commands:
-      - echo "Compilando el proyecto..."
-      - dotnet publish -c Release -o published/
+      - echo "Compilando los proyectos..."
+      - dotnet publish EmailProcessor/EmailProcessor.csproj -c Release -o published/EmailProcessor
+      - dotnet publish MailReader/MailReader.csproj -c Release -o published/MailReader
+
   post_build:
     commands:
       - echo "Verificando archivos generados en published..."
       - ls -l published/
       - ls -l published/EmailProcessor/
+      - ls -l published/MailReader/
 
       - echo "Generando archivos ZIP con nombres compatibles..."
-      - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor_zip.zip
-      - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader_zip.zip
+      - Compress-Archive -Path published/EmailProcessor -DestinationPath EmailProcessor_zip.zip
+      - Compress-Archive -Path published/MailReader -DestinationPath MailReader_zip.zip
+
       - echo "Verificación de archivos generados:"
       - ls -l EmailProcessor_zip.zip
       - ls -l MailReader_zip.zip
