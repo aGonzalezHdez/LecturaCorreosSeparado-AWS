@@ -28,8 +28,12 @@ phases:
 
 artifacts:
   secondary-artifacts:
-    BuildArtifact:
+    EmailProcessor_zip:
       files:
         - EmailProcessor_zip.zip
+      discard-paths: yes
+    MailReader_zip:
+      files:
         - MailReader_zip.zip
       discard-paths: yes
+
