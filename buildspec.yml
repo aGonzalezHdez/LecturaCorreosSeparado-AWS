@@ -16,6 +16,7 @@ phases:
       - echo "Verificación de archivos generados:"
       - ls -l EmailProcessor_zip.zip
       - ls -l MailReader_zip.zip
+      - 
 
 artifacts:
   files:
