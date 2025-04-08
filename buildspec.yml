@@ -10,13 +10,16 @@ phases:
       - dotnet publish -c Release -o published/
   post_build:
     commands:
+      - echo "Verificando archivos generados en published..."
+      - ls -l published/
+      - ls -l published/EmailProcessor/
+
       - echo "Generando archivos ZIP con nombres compatibles..."
       - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor_zip.zip
       - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader_zip.zip
       - echo "Verificación de archivos generados:"
       - ls -l EmailProcessor_zip.zip
       - ls -l MailReader_zip.zip
-      - 
 
 artifacts:
   files:
