@@ -27,6 +27,7 @@ phases:
       - ls -l MailReader_zip.zip
 
 artifacts:
+  #Hay que corregir configuraciones exceso del free tier
   secondary-artifacts:
     EmailProcessor_zip:
       files:
