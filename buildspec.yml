@@ -24,24 +24,16 @@ phases:
       - if (Test-Path "published/EmailProcessor/DatabaseInitializer.runtimeconfig.json") { Remove-Item "published/EmailProcessor/DatabaseInitializer.runtimeconfig.json" }
       
       - echo "Empaquetando EmailProcessor en ZIP usando PowerShell..."
-      - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor.zip      
+      - Compress-Archive -Path published/EmailProcessor/* -DestinationPath EmailProcessor_ZIP.zip      
       
       - echo "Publicando y empaquetando MailReader..."
       - dotnet publish MailReader/MailReader.csproj -c Release -o published/MailReader
       
       - echo "Empaquetando MailReader en ZIP usando PowerShell..."
-      - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader.zip
-
-      - echo "Verificando archivos ZIP generados..."
-        - ls -l EmailProcessor.zip
-        - ls -l MailReader.zip
-
-
-
-
+      - Compress-Archive -Path published/MailReader/* -DestinationPath MailReader_ZIP.zip
 
 artifacts:
   files:
-    - EmailProcessor.zip
-    - MailReader.zip
+    - EmailProcessor_ZIP.zip
+    - MailReader_ZIP.zip
   discard-paths: yes
