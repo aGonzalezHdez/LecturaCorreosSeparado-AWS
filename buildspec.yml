@@ -27,7 +27,9 @@ phases:
       - ls -l MailReader_zip.zip
 
 artifacts:
-  files:
-    - EmailProcessor_zip.zip
-    - MailReader_zip.zip
-  discard-paths: yes
+  secondary-artifacts:
+    BuildArtifact:
+      files:
+        - EmailProcessor_zip.zip
+        - MailReader_zip.zip
+      discard-paths: yes
